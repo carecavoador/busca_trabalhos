@@ -38,20 +38,17 @@ class Trabalho:
     arquivos_layout: list = field(init=False, default_factory=list)
     arquivos_digital: list = field(init=False, default_factory=list)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.carrega_info_do_pdf()
 
-    # def __repr__(self) -> str:
-    #     return f"OS {self.os_number} v{self.os_version}"
-
     def __str__(self) -> str:
-        return (
-            f"[OS {self.num_os}/{self.pedido} v{self.versao} - {self.cliente}] "
-            + self.nome + "\n"
-            + self.lista_materiais()
-        )
+        return f"{self.resumo} {self.nome}'\n'{self.lista_materiais()}"
 
-    def lista_materiais(self):
+    @property
+    def resumo(self) -> str:
+        return f"[OS {self.num_os}/{self.pedido} v{self.versao} - {self.cliente}]"
+
+    def lista_materiais(self) -> str:
         if self.itens_expedir:
             lista = ["[Materiais a expedir]"]
             lista.extend([item.value for item in self.itens_expedir])

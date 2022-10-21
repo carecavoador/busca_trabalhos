@@ -14,9 +14,8 @@ from trabalhos import Trabalho
 HOJE = datetime.today().strftime("%d-%m-%Y")
 AGORA = datetime.now().strftime("%H-%M-%S")
 
-ARGUMENTOS = sys.argv[1:]
-
 RE_NUM_OS = r"(\d{4,}).*[vV](\d+)"
+
 
 def descompacta(_arquivo: Path, _novo_arquivo: Path) -> None:
     try:
@@ -82,18 +81,15 @@ def busca_arquivos(
             os.mkdir(_baixados)
 
         for _arquivo in _arquivos:
-
             _novo_arquivo = _saida_arquivos.joinpath(
                 "".join([str(job), "_", tipo, sufixo, _arquivo.suffix])
             )
-
             if not _arquivo.suffix.lower() == ".zip":
                 copy(_arquivo, _novo_arquivo)
             else:
                 descompacta(_arquivo, _novo_arquivo)
 
             _arquivo_baixado = _baixados.joinpath(_arquivo.name)
-
             if not _arquivo_baixado.exists():
                 copy(_arquivo, _arquivo_baixado)
                 os.remove(_arquivo)
@@ -103,7 +99,6 @@ def busca_arquivos(
                 )
                 copy(_arquivo, _novo_arquivo_baixado)
                 os.remove(_arquivo)
-
     else:
         print(f"Não foi possível localizar arquivos de {tipo} para {job}.")
         continua = input("Pressione qualquer tecla para continuar...\n> ")
@@ -111,7 +106,6 @@ def busca_arquivos(
 
 def main() -> None:
     """Início do programa."""
-
     # Carrega arquivo de configurações.
     config = carrega_config()
 
@@ -121,19 +115,25 @@ def main() -> None:
     dir_digitais = Path(config["diretorios"]["dir_pt_digital"]).joinpath(HOJE)
 
     # Cria a lista de trabalhos a serem feitos.
-    jobs = [Trabalho(Path(pdf)) for pdf in ARGUMENTOS if Path(pdf).suffix == ".pdf"]
+    # lista_trabalhos = [
+    #     Trabalho(Path(pdf)) for pdf in sys.argv if Path(pdf).suffix == ".pdf"
+    # ]
+    lista_trabalhos = [
+        Trabalho(pdf) for pdf in Path("testes/ordens").iterdir() if pdf.suffix == ".pdf"
+    ]
 
-    if not jobs:
+    if not lista_trabalhos:
         input("Sem trabalhos no momento. Pressione 'Enter' para sair: ")
         sys.exit()
 
-    for job in jobs:
-        print(f"Processando {job}...")
-        if job.precisa_layout:
-            busca_arquivos(job, dir_layouts, dir_saida, "Layout")
-        if job.precisa_digital:
-            busca_arquivos(job, dir_digitais, dir_saida, "Prova Digital", sufixo=job.perfil)
+    for trabalho in lista_trabalhos:
+        print(f"Processando {trabalho.resumo}...")
+        # if trabalho.precisa_layout:
+        #     busca_arquivos(trabalho, dir_layouts, dir_saida, "Layout")
+        # if trabalho.precisa_digital:
+        #     busca_arquivos(trabalho, dir_digitais, dir_saida, "Prova Digital", sufixo=trabalho.perfil)
 
 
 if __name__ == "__main__":
     main()
+    input("Programa terminado. Pressione 'Enter' para fechar.")
