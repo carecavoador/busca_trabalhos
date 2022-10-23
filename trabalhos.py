@@ -50,7 +50,7 @@ class Trabalho:
 
     def lista_materiais(self) -> str:
         if self.itens_expedir:
-            lista = ["[Materiais a expedir]"]
+            lista = ["Materiais a expedir:"]
             lista.extend([item.value for item in self.itens_expedir])
             return "\n- ".join(lista)
         else:
@@ -77,6 +77,8 @@ class Trabalho:
             # Perfil de cores
             if not texto[13].startswith(SEM_PERFIL):
                 self.perfil = texto[13].strip(FIM_PERFIL)
+            else:
+                self.perfil = "Sem Perfil"
 
             # Materiais para expedir
             try:

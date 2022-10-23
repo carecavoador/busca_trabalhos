@@ -2,6 +2,10 @@ import sys
 import tomli, tomli_w
 from pathlib import Path
 
+from rich.console import Console
+
+console = Console()
+
 
 dir_raiz = Path().home().joinpath("busca-trabalhos")
 dir_config = dir_raiz.joinpath("config")
@@ -9,7 +13,7 @@ arquivo_config = dir_config / "config.toml"
 
 
 def _cria_nova_config():
-    print("[NOVA CONFIGURAÇÃO]")
+    console.print("[bold cyan][NOVA CONFIGURAÇÃO]")
 
     def tenta_tres_vezes(diretorio: str) -> Path:
         for _ in range(3):
@@ -18,9 +22,13 @@ def _cria_nova_config():
                 dir = Path(dir)
                 if dir.exists():
                     return dir
-            print("> Diretório inválido.")
+            console.print(
+                "[bold red][ERRO][/bold red] Diretório inválido. Por favor, tente novamente."
+            )
             continue
-        print("[ERRO] Não foi possível criar o arquivo de configuração.")
+        console.print(
+            "[bold red][ERRO][/bold red] Não foi possível criar o arquivo de configuração."
+        )
         sys.exit()
 
     dir_layouts = tenta_tres_vezes("Prints Layout")

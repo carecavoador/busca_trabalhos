@@ -1,13 +1,15 @@
 """main.py"""
 import sys
 import os
+import time
 
 from shutil import copy
 from pathlib import Path
 from datetime import datetime
 from zipfile import ZipFile, BadZipFile
 
-from configuracoes import carrega_config
+
+from configuracoes import console, carrega_config
 from trabalhos import Trabalho
 
 
@@ -127,13 +129,23 @@ def main() -> None:
         sys.exit()
 
     for trabalho in lista_trabalhos:
-        print(f"Processando {trabalho.resumo}...")
+        console.rule(f"[bold cyan]{trabalho.resumo}", align="left")
+        console.print(trabalho.lista_materiais())
+        with console.status("Buscando arquivos..."):
+            time.sleep(2)
+        # print(trabalho)
         # if trabalho.precisa_layout:
         #     busca_arquivos(trabalho, dir_layouts, dir_saida, "Layout")
         # if trabalho.precisa_digital:
-        #     busca_arquivos(trabalho, dir_digitais, dir_saida, "Prova Digital", sufixo=trabalho.perfil)
+        #     busca_arquivos(
+        #         trabalho,
+        #         dir_digitais,
+        #         dir_saida,
+        #         "Prova Digital",
+        #         sufixo=trabalho.perfil,
+        #     )
 
 
 if __name__ == "__main__":
     main()
-    input("Programa terminado. Pressione 'Enter' para fechar.")
+    console.input("[green]Programa terminado. Pressione 'Enter' para fechar. ")
