@@ -118,7 +118,7 @@ def main() -> None:
 
     # Cria a lista de trabalhos a serem feitos.
     # lista_trabalhos = [
-    #     Trabalho(Path(pdf)) for pdf in sys.argv if Path(pdf).suffix == ".pdf"
+    #     Trabalho(Path(pdf)) for pdf in sys.argv if pdf.lower().endswith(".pdf")
     # ]
     lista_trabalhos = [
         Trabalho(pdf) for pdf in Path("testes/ordens").iterdir() if pdf.suffix == ".pdf"
