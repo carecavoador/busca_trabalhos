@@ -129,7 +129,7 @@ def main() -> None:
         sys.exit()
 
     for trabalho in lista_trabalhos:
-        console.rule(f"[bold cyan]{trabalho.resumo}", align="left")
+        console.rule(f"[bold green]{trabalho.resumo}", align="left")
         console.print(trabalho.lista_materiais())
         with console.status("Buscando arquivos..."):
             time.sleep(2)
@@ -147,5 +147,11 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
-    console.input("[green]Programa terminado. Pressione 'Enter' para fechar. ")
+    try:
+        main()
+    except KeyboardInterrupt:
+        console.input(
+            "[red]Programa cancelado pelo usuário. Pressione 'Enter' para fechar: "
+        )
+        sys.exit()
+    console.input("[green]Programa terminado. Pressione 'Enter' para fechar: ")
