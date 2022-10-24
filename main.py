@@ -157,7 +157,8 @@ def main() -> None:
         if erros:
             arquivos_nao_encontrados.extend([{trabalho.resumo: erros}])
     if arquivos_nao_encontrados:
-        console.rule("[red]ARQUIVOS NÃO ENCONTRADOS:", align="left")
+        console.rule()
+        console.print("[red]ARQUIVOS NÃO ENCONTRADOS:")
         for nao_encontrado in arquivos_nao_encontrados:
             for k, v in nao_encontrado.items():
                 for material in v:
