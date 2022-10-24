@@ -136,24 +136,23 @@ def main() -> None:
         console.rule()
         console.print(trabalho.resumo)
         console.print(trabalho.lista_materiais())
-        with console.status("Buscando arquivos..."):
-            for item in trabalho.itens_expedir:
-                if item == ItensExpedir.LAYOUT:
-                    console.print(f"Buscando arquivo de {ItensExpedir.LAYOUT.value}...")
+        for item in trabalho.itens_expedir:
+            if item == ItensExpedir.LAYOUT:
+                with console.status(f"Buscando arquivo de {ItensExpedir.LAYOUT.value}..."):
                     falta_layouts = busca_arquivos(trabalho, dir_layouts, dir_saida, ItensExpedir.LAYOUT)
                     if falta_layouts:
                         erros.append(falta_layouts)
-                        console.print("[bold red]Não encontrado!")
+                        console.print(f"[bold red]Arquivo de {ItensExpedir.LAYOUT.value} não encontrado!")
                     else:
-                        console.print("[bold green]OK!")
-                if item == ItensExpedir.DIGITAL:
-                    console.print(f"Buscando arquivo de {ItensExpedir.DIGITAL.value}...")
+                        console.print(f"[bold green]Arquivo de {ItensExpedir.LAYOUT.value} OK!")
+            if item == ItensExpedir.DIGITAL:
+                with console.status(f"Buscando arquivo de {ItensExpedir.DIGITAL.value}..."):
                     falta_digitais = busca_arquivos(trabalho, dir_digitais, dir_saida, ItensExpedir.DIGITAL, sufixo=trabalho.perfil)
                     if falta_digitais:
                         erros.append(falta_digitais)
-                        console.print("[bold red]Não encontrado!")
+                        console.print(f"[bold red]Arquivo de {ItensExpedir.DIGITAL.value} não encontrado!")
                     else:
-                        console.print("[bold green]OK!")
+                        console.print(f"[bold green]Arquivo de {ItensExpedir.DIGITAL.value} OK!")
         if erros:
             arquivos_nao_encontrados.extend([{trabalho.resumo: erros}])
     if arquivos_nao_encontrados:
@@ -163,6 +162,7 @@ def main() -> None:
             for k, v in nao_encontrado.items():
                 for material in v:
                     console.print(f"[red]{k} -> {material.value}")
+        console.rule()
         console.input("Pressione 'Enter' para fechar: ")
         sys.exit()
     encerrar()
