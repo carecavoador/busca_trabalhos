@@ -104,6 +104,7 @@ def conta_ate(segundos: int, texto: str = "") -> None:
 
 def encerrar() -> None:
     """Encerra o programa."""
+    console.rule()
     console.print("[green]Programa encerrado com sucesso!")
     conta_ate(5, "Fechando em ")
     sys.exit()
@@ -123,7 +124,8 @@ def main() -> None:
     # lista_trabalhos = [
     #     Trabalho(Path(pdf)) for pdf in sys.argv if pdf.lower().endswith(".pdf")
     # ]
-    dir_ordens = Path(r"C:\Users\Everton Souza\Downloads")
+    # dir_ordens = Path(r"C:\Users\Everton Souza\Downloads")
+    dir_ordens = Path().home().joinpath("Downloads")
     lista_trabalhos = [
         Trabalho(pdf) for pdf in dir_ordens.iterdir() if pdf.suffix == ".pdf"
     ]
@@ -133,7 +135,6 @@ def main() -> None:
     arquivos_nao_encontrados = []
     for trabalho in lista_trabalhos:
         erros = []
-        console.rule()
         console.print(trabalho.resumo)
         console.print(trabalho.lista_materiais())
         for item in trabalho.itens_expedir:
@@ -155,8 +156,9 @@ def main() -> None:
                         console.print(f"[bold green]Arquivo de {ItensExpedir.DIGITAL.value} OK!")
         if erros:
             arquivos_nao_encontrados.extend([{trabalho.resumo: erros}])
-    if arquivos_nao_encontrados:
         console.rule()
+    if arquivos_nao_encontrados:
+        # console.rule()
         console.print("[red]ARQUIVOS NÃO ENCONTRADOS:")
         for nao_encontrado in arquivos_nao_encontrados:
             for k, v in nao_encontrado.items():
