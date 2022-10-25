@@ -1,3 +1,6 @@
 .vscode
 __pycache__
 testes
+build
+dist
+*.spec
