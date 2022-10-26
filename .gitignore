@@ -3,4 +3,6 @@ __pycache__
 testes
 build
 dist
+.history
 *.spec
+antigo

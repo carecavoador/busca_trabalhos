@@ -63,13 +63,11 @@ class Trabalho:
             pagina = reader.pages[0]
             texto = pagina.extract_text().splitlines()
 
-            # Os, Pedido, Versão, Cliente
-            self.num_os, self.pedido, self.versao, self.cliente = (
-                int(texto[10].split()[0]),
-                int(texto[10].split()[2]),
-                int(texto[10].split()[1]),
-                " ".join(texto[10].split()[3:]),
-            )
+            # Número de OS, Pedido, Versão, Cliente
+            self.num_os = int(texto[10].split()[0])
+            self.pedido = int(texto[10].split()[1])
+            self.versao = int(texto[10].split()[2])
+            self.cliente = " ".join(texto[10].split()[3:])
 
             # Nome do trabalho
             self.nome = texto[11]
