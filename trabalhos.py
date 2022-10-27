@@ -1,3 +1,5 @@
+import re
+
 from pathlib import Path
 from dataclasses import dataclass, field
 
@@ -50,7 +52,9 @@ class Trabalho:
 
             # Perfil de cores
             if not texto[13].startswith(SEM_PERFIL):
-                self.perfil = texto[13].strip(FIM_PERFIL)
+                _perfil = texto[13].strip(FIM_PERFIL)
+                # Substitui os caracteres '\', '/', '?', '*', ',', e '.' por '_'
+                self.perfil = re.sub(r"[\/?*,.]", "_", _perfil)
             else:
                 self.perfil = "Sem Perfil"
 
