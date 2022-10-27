@@ -1,29 +1,15 @@
-"""
-trabalhos.py
-Enum ItensExpedir,
-Classe Trabalhos
-"""
 from pathlib import Path
-from enum import Enum
 from dataclasses import dataclass, field
 
 from PyPDF2 import PdfReader
+
+from itens_expedir import ItensExpedir
 
 
 SEM_PERFIL = "Sem"
 FIM_PERFIL = "Fechamento:"
 INICIO_LISTA = "Itens para Expedir:"
 FIM_LISTA = "Observações:"
-
-
-class ItensExpedir(Enum):
-    CLICHES = "Clichês"
-    LAYOUT = "Print Layout"
-    DIGITAL = "Prova Digital"
-    AMOSTRA = "Amostra"
-    EPSON = "Prova Substrato - EPSON"
-    ROLAND = "Prova Substrato - ROLAND"
-    HEAFORD = "Prova de Máquina"
 
 
 @dataclass

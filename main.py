@@ -10,7 +10,8 @@ from datetime import datetime
 from zipfile import ZipFile, BadZipFile
 
 from configuracoes import console, carrega_config
-from trabalhos import Trabalho, ItensExpedir
+from trabalhos import Trabalho
+from itens_expedir import ItensExpedir
 
 
 HOJE = datetime.today().strftime("%d-%m-%Y")
@@ -47,9 +48,9 @@ def adivinha_num_os(nome_arquivo: str) -> tuple[int, int]:
     if resultado:
         try:
             num_os, versao = int(resultado[0][0]), int(resultado[0][1])
-            return num_os, versao
+            return (num_os, versao)
         except ValueError:
-            return 0, 0
+            return (0, 0)
 
 
 def busca_arquivos(trabalho: Trabalho, dir_entrada: Path, dir_saida: Path, tipo_arquivo: ItensExpedir, sufixo: str = "",) -> list[Path]:
@@ -106,6 +107,9 @@ def contagem_regressiva(segundos: int, texto: str = "") -> None:
 def encerrar() -> None:
     """Encerra o programa."""
     console.print("[bold green]Programa encerrado com sucesso!")
+    console.print("Desenvolvido por [bold]Everton Souza[/bold] para a Clicheria Blumenau\n"
+                  "Contato: e.rodrigo@outlook.com\n"
+                  "https://github.com/carecavoador/busca_trabalhos")
     contagem_regressiva(5, "Fechando em ")
     sys.exit()
 
@@ -170,7 +174,7 @@ def main() -> None:
                     console.print(f"[bold red]{trabalho} -> {material.value}")
         console.rule()
         input("Pressione 'Enter' para fechar: ")
-        sys.exit()
+        encerrar()
 
     # Fim do programa.
     encerrar()
@@ -181,5 +185,4 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print("[bold red]Programa cancelado pelo usuário.")
-        contagem_regressiva(3)
         sys.exit()
