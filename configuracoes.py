@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 import tomli, tomli_w
 from pathlib import Path
 
@@ -7,15 +8,21 @@ from rich.console import Console
 console = Console()
 
 
-dir_raiz = Path().home().joinpath("busca-trabalhos")
-dir_config = dir_raiz.joinpath("config")
-arquivo_config = dir_config / "config.toml"
+DIR_CONFIG = Path().home().joinpath(".config", "busca-trabalhos")
+ARQUIVO_CONFIG = DIR_CONFIG.joinpath("config.toml")
 
 
-def _cria_nova_config():
+def _cria_nova_config() -> None:
+    """
+    Cria um novo arquivo de configuração no diretório %HOME%
+    """
     console.print("[bold cyan][NOVA CONFIGURAÇÃO]")
 
     def tenta_tres_vezes(diretorio: str) -> Path:
+        """
+        Tenta três vezes retornar um objeto Path válido com o caminho
+        informado pelo usuário.
+        """
         for _ in range(3):
             dir = input(f"> Diretório de {diretorio}: ")
             if dir:
@@ -23,11 +30,11 @@ def _cria_nova_config():
                 if dir.exists():
                     return dir
             console.print(
-                "[bold red][ERRO][/bold red] Diretório inválido. Por favor, tente novamente."
+                "[bold red][ERRO]Diretório inválido. Por favor, tente novamente."
             )
             continue
         console.print(
-            "[bold red][ERRO][/bold red] Não foi possível criar o arquivo de configuração."
+            "[bold red][ERRO]Não foi possível criar o arquivo de configuração."
         )
         sys.exit()
 
@@ -43,13 +50,13 @@ def _cria_nova_config():
                 "dir_saida": dir_saida.as_posix(),
             }
         }
-        tomli_w.dump(config, arquivo_config.open(mode="wb"))
+        tomli_w.dump(config, ARQUIVO_CONFIG.open(mode="wb"))
 
 
-def carrega_config(arquivo_config: Path = arquivo_config):
+def carrega_config(arquivo_config: Path = ARQUIVO_CONFIG) -> dict[str, Any]:
     """Tenta carregar um arquivo de configurações existente. Cria um novo caso não exista."""
-    if not dir_config.exists():
-        dir_config.mkdir(parents=True)
+    if not DIR_CONFIG.exists():
+        DIR_CONFIG.mkdir(parents=True)
     if not arquivo_config.exists():
         _cria_nova_config()
     return tomli.load(arquivo_config.open(mode="rb"))

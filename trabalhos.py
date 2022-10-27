@@ -1,5 +1,6 @@
 """
 trabalhos.py
+Enum ItensExpedir,
 Classe Trabalhos
 """
 from pathlib import Path
@@ -27,6 +28,13 @@ class ItensExpedir(Enum):
 
 @dataclass
 class Trabalho:
+    """
+    Esta classe serve para armazenar e manipular as informações contidas no
+    arquivo .PDF da Ordem de Serviço. É preciso passar om objeto Path com o
+    caminho absoluto para o arquivo .PDF no construtor do objeto. O método
+    carrega_info_do_pdf extrai o texto do PDF e tenta carregar as informações
+    pertinentes à partir do texto.
+    """
     pdf_os: Path
     num_os: int = field(init=False)
     pedido: int = field(init=False)
@@ -39,24 +47,6 @@ class Trabalho:
     arquivos_digital: list = field(init=False, default_factory=list)
 
     def __post_init__(self) -> None:
-        self.carrega_info_do_pdf()
-
-    def __str__(self) -> str:
-        return f"{self.resumo} {self.nome}'\n'{self.lista_materiais()}"
-
-    @property
-    def resumo(self) -> str:
-        return f"[OS {self.num_os}/{self.pedido} v{self.versao} - {self.cliente}]"
-
-    def lista_materiais(self) -> str:
-        if self.itens_expedir:
-            lista = ["Materiais a expedir:"]
-            lista.extend([item.value for item in self.itens_expedir])
-            return "\n- ".join(lista)
-        else:
-            return "- SEM ITENS A EXPEDIR"
-
-    def carrega_info_do_pdf(self) -> None:
         """Carrega as informações do trabalho a partir do PDF da OS."""
         with open(self.pdf_os, "rb") as arquivo_pdf:
             reader = PdfReader(arquivo_pdf)
@@ -103,3 +93,20 @@ class Trabalho:
                     self.itens_expedir.add(ItensExpedir.HEAFORD)
                 elif item.startswith(ItensExpedir.AMOSTRA.value):
                     self.itens_expedir.add(ItensExpedir.AMOSTRA)
+
+    def __str__(self) -> str:
+        return f"{self.resumo} {self.nome}'\n'{self.lista_materiais()}"
+
+    @property
+    def resumo(self) -> str:
+        """[OS 000000/0 v0 - <nome do cliente>]"""
+        return f"[OS {self.num_os}/{self.pedido} v{self.versao} - {self.cliente}]"
+
+    def lista_materiais(self) -> str:
+        """Retorna a lista de materiais no campo 'Itens para Expedir'"""
+        if self.itens_expedir:
+            lista = ["Itens para Expedir:"]
+            lista.extend([item.value for item in self.itens_expedir])
+            return "\n- ".join(lista)
+        else:
+            return "- SEM ITENS A EXPEDIR"

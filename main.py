@@ -173,7 +173,6 @@ def main() -> None:
         sys.exit()
 
     # Fim do programa.
-    console.rule()
     encerrar()
 
 

@@ -1,8 +1,3 @@
-.vscode
 __pycache__
-testes
-build
-dist
 .history
-*.spec
-antigo
+.pylintrc
