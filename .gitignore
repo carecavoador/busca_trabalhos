@@ -1,3 +1,6 @@
 __pycache__
 .history
 .pylintrc
+.vscode
+Pipfile
+Pipfile.lock
