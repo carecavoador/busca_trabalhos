@@ -1,7 +1,6 @@
 """main.py"""
 import sys
 import re
-import time
 import shutil
 import datetime as dt
 
@@ -45,8 +44,8 @@ def descompacta(_arquivo: Path) -> list[tuple[str, BytesIO]]:
                 if item.filename.startswith("."):
                     continue
                 conteudo.append((item.filename, BytesIO(arquivo_zip.read(item))))
-    except BadZipFile:
-        raise BadZipFile
+    except BadZipFile as exc:
+        raise BadZipFile from exc
     return conteudo
 
 
@@ -71,10 +70,9 @@ def busca_arquivos(
     """Tenta localizar arquivos relativos ao Trabalho no local especificado,
     depois tenta copiar os respectivos arquivos para o diretório de saida.
     Retorna ItensExpedir caso não seja possível localizar arquivos."""
-    # Se o diretório de entrada não existir, retorna tipo de arquivo não encontrado.
+    # Se o diretório de entrada não existir, retorna tipo de arquivo não encontrado
     if not dir_entrada.exists():
         return tipo_arquivo
-    
     # Lista com os arquivos presentes no diretório de entrada com o mesmo
     # número de OS e Versão do Trabalho.
     arquivos_encontrados = [
@@ -82,18 +80,18 @@ def busca_arquivos(
         for arquivo in dir_entrada.iterdir()
         if adivinha_num_os(arquivo.name) == (trabalho.num_os, trabalho.versao)
     ]
-    
+
     # Se não houver nenhum arquivo encontrado, retorna tipo de arquivo não encontrado.
     if not arquivos_encontrados:
         return tipo_arquivo
-    
+
     # Verifica se os diretórios de Saida e Baixados já existem ou cria os
     # diretórios caso não existam.
     dir_saida = dir_saida.joinpath(tipo_arquivo.value)
     dir_saida.mkdir(exist_ok=True)
     dir_baixados = dir_entrada.joinpath("Baixados")
     dir_baixados.mkdir(exist_ok=True)
-    
+
     # Processa a lista de arquivos encontrados no diretório de entrada.
     for idx, arquivo in enumerate(arquivos_encontrados):
         # Adiciona _ (underline) à frente do sufixo.
@@ -107,24 +105,28 @@ def busca_arquivos(
                 for idx, item in enumerate(conteudo_zip):
                     nome_arquivo, bytes_arquivo = item
                     extensao = "." + nome_arquivo.split(".")[-1]
-                    arquivo_saida = f"{trabalho.num_os}_p"\
-                                    f"{trabalho.pedido}_v"\
-                                    f"{trabalho.versao}_"\
-                                    f"{tipo_arquivo.value}"\
-                                    f"{sufixo}"\
-                                    f"{'_'+ str(idx) if idx >= 1 else ''}"\
-                                    f"{extensao}"
+                    arquivo_saida = (
+                        f"{trabalho.num_os}_p"
+                        f"{trabalho.pedido}_v"
+                        f"{trabalho.versao}_"
+                        f"{tipo_arquivo.value}"
+                        f"{sufixo}"
+                        f"{'_'+ str(idx) if idx >= 1 else ''}"
+                        f"{extensao}"
+                    )
                     if dir_saida.joinpath(arquivo_saida).exists():
                         # Acrescenta AGORA depois do sufixo caso
                         # o arquivo de saída já exista.
-                        arquivo_saida = f"{trabalho.num_os}_p"\
-                                        f"{trabalho.pedido}_v"\
-                                        f"{trabalho.versao}_"\
-                                        f"{tipo_arquivo.value}"\
-                                        f"{sufixo}"\
-                                        f"{'_'+ str(idx) if idx >= 1 else ''}"\
-                                        f"_{AGORA}"\
-                                        f"{extensao}"
+                        arquivo_saida = (
+                            f"{trabalho.num_os}_p"
+                            f"{trabalho.pedido}_v"
+                            f"{trabalho.versao}_"
+                            f"{tipo_arquivo.value}"
+                            f"{sufixo}"
+                            f"{'_'+ str(idx) if idx >= 1 else ''}"
+                            f"_{AGORA}"
+                            f"{extensao}"
+                        )
                     with open(
                         dir_saida.joinpath(arquivo_saida), mode="wb"
                     ) as arquivo_descompactado:
@@ -134,31 +136,35 @@ def busca_arquivos(
         # Caso não seja arquivo .zip
         else:
             # Copia para o diretório de saida.
-            arquivo_saida = f"{trabalho.num_os}_p"\
-                            f"{trabalho.pedido}_v"\
-                            f"{trabalho.versao}_"\
-                            f"{tipo_arquivo.value}"\
-                            f"{sufixo}"\
-                            f"{'_'+ str(idx) if idx >= 1 else ''}"\
-                            f"{arquivo.suffix}"
+            arquivo_saida = (
+                f"{trabalho.num_os}_p"
+                f"{trabalho.pedido}_v"
+                f"{trabalho.versao}_"
+                f"{tipo_arquivo.value}"
+                f"{sufixo}"
+                f"{'_'+ str(idx) if idx >= 1 else ''}"
+                f"{arquivo.suffix}"
+            )
             if dir_saida.joinpath(arquivo_saida).exists():
                 # Acrescenta AGORA depois do sufixo caso
                 # o arquivo de saída já exista.
-                arquivo_saida = f"{trabalho.num_os}_p"\
-                                f"{trabalho.pedido}_v"\
-                                f"{trabalho.versao}_"\
-                                f"{tipo_arquivo.value}"\
-                                f"{sufixo}"\
-                                f"{'_'+ str(idx) if idx >= 1 else ''}"\
-                                f"_{AGORA}"\
-                                f"{arquivo.suffix}"
+                arquivo_saida = (
+                    f"{trabalho.num_os}_p"
+                    f"{trabalho.pedido}_v"
+                    f"{trabalho.versao}_"
+                    f"{tipo_arquivo.value}"
+                    f"{sufixo}"
+                    f"{'_'+ str(idx) if idx >= 1 else ''}"
+                    f"_{AGORA}"
+                    f"{arquivo.suffix}"
+                )
             shutil.copy(arquivo, dir_saida.joinpath(arquivo_saida))
 
         # Copia o arquivo original para o diretório de baixados.
         if dir_baixados.joinpath(arquivo.name).exists():
             shutil.copy(
-                arquivo, dir_baixados.joinpath(
-                    f"{arquivo.stem}_{AGORA}{arquivo.suffix}")
+                arquivo,
+                dir_baixados.joinpath(f"{arquivo.stem}_{AGORA}{arquivo.suffix}"),
             )
         shutil.copy(arquivo, dir_baixados.joinpath(arquivo.name))
 
@@ -166,17 +172,9 @@ def busca_arquivos(
         arquivo.unlink()
 
 
-def contagem_regressiva(segundos: int, texto: str = "") -> None:
-    """Exibe uma contagem regressiva com um texto pré definido."""
-    for i in range(segundos, 0, -1):
-        with console.status(f"{texto}{i}..."):
-            time.sleep(1)
-
-
 def encerrar() -> None:
     """Encerra o programa."""
     console.print("[bold green]Programa encerrado com sucesso!")
-    contagem_regressiva(5, "Fechando em ")
     sys.exit()
 
 
@@ -269,7 +267,7 @@ def main() -> None:
                 for material in itens:
                     console.print(f"[bold red]{trabalho} -> {material.value}")
         console.rule()
-        input("Pressione 'Enter' para fechar: ")
+        input("Pressione 'enter' para fechar. ")
         encerrar()
 
     # Fim do programa.
