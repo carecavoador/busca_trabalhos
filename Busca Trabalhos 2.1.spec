@@ -28,7 +28,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='Busca Trabalhos 2.0',
+    name='Busca Trabalhos 2.1',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -41,5 +41,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['assets/data-gathering.ico'],
+    icon=['assets\\data-gathering.png'],
 )
